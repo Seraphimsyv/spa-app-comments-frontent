@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CommentType } from "../../common/types"
 import { convertDate } from "../../common/utils";
 import { Media } from "../Media";
-import { Modal } from "../Modal";
 import { NewComment } from "../Modal/NewComment";
+import { useCommentSocket } from "../../providers/comment.provider";
 
 interface IHeaderProps {
   comment: CommentType;
@@ -12,7 +12,16 @@ interface IHeaderProps {
 
 const Header: React.FC<IHeaderProps> = (props) => {
   const { comment, isTest } = props;
+  const { client } = useCommentSocket();
   const [openForm, setOpenForm] = useState<boolean>(false);
+
+  useEffect(() => {
+
+    client.subscribe('commentCreated', () => {
+      console.log('(Comment) Event - (commentCreated)')
+      setOpenForm(false);
+    })
+  }, [openForm, client])
 
   return (
     <>
@@ -56,13 +65,11 @@ const Header: React.FC<IHeaderProps> = (props) => {
 
       </div>
 
-
-      <Modal
-        open={openForm}
+      <NewComment 
+        isOpen={openForm}
         onClose={() => setOpenForm(false)}
-      >
-        <NewComment parentId={comment.id} />
-      </Modal>
+        parentId={comment.id}
+      />
 
     </>
   )
@@ -78,7 +85,7 @@ export const Content: React.FC<IContentProps> = (props) => {
   return (
     <>
       <div className="content">
-        <p>{comment.text}</p>
+        <p dangerouslySetInnerHTML={{ __html: comment.text }}/>
 
         <Media file={comment.file} />
       </div>

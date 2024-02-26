@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useAuth } from "../../../providers/auth.provider"
+import { Modal } from "..";
 
-export const SigninModal = () => {
+interface IProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const SigninModal: React.FC<IProps> = (props) => {
   const {
     handleSignin
   } = useAuth();
+  const { isOpen, onClose } = props;
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -39,55 +46,57 @@ export const SigninModal = () => {
   
   return (
     <>
-      <div id="modal-signin">
+      <Modal open={isOpen} onClose={onClose}>
+        <div id="modal-signin">
 
-        <div
-          style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}
-        >
+          <div
+            style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}
+          >
 
-          <label htmlFor="input-signin-username">Username</label>
-          <input
-            type="text"
-            id="input-signin-username"
-            value={username}
-            onChange={(evt) => setUsername(evt.target.value)}
-          />
-        
-          <label htmlFor="input-signin-password">Password</label>
-          <input
-            type="password"
-            id="input-signin-password"
-            value={password}
-            onChange={(evt) => setPassword(evt.target.value)}
-          />
+            <label htmlFor="input-signin-username">Username</label>
+            <input
+              type="text"
+              id="input-signin-username"
+              value={username}
+              onChange={(evt) => setUsername(evt.target.value)}
+            />
+          
+            <label htmlFor="input-signin-password">Password</label>
+            <input
+              type="password"
+              id="input-signin-password"
+              value={password}
+              onChange={(evt) => setPassword(evt.target.value)}
+            />
+
+          </div>
+
+          <div
+            style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}
+          >
+
+            <label htmlFor="input-signin-email">Email</label>
+            <input
+              type="email"
+              id="input-signin-email"
+              value={email}
+              onChange={(evt) => setEmail(evt.target.value)}
+            />
+          
+            <label htmlFor="input-signin-homepage">Homepage*</label>
+            <input
+              type="text"
+              id="input-signin-homepage"
+              value={homePage}
+              onChange={(evt) => setHomePage(evt.target.value)}
+            />
+
+          </div>
+
+          <button onClick={handleAuth}>Signin</button>
 
         </div>
-
-        <div
-          style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}
-        >
-
-          <label htmlFor="input-signin-email">Email</label>
-          <input
-            type="email"
-            id="input-signin-email"
-            value={email}
-            onChange={(evt) => setEmail(evt.target.value)}
-          />
-        
-          <label htmlFor="input-signin-homepage">Homepage*</label>
-          <input
-            type="text"
-            id="input-signin-homepage"
-            value={homePage}
-            onChange={(evt) => setHomePage(evt.target.value)}
-          />
-
-        </div>
-
-        <button onClick={handleAuth}>Signin</button>
-
-      </div>
+      </Modal>
     </>
   )
 }

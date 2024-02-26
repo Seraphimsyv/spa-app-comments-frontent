@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Pages } from "../../common/types"
 import { useAuth } from "../../providers/auth.provider";
-import { Modal } from "../Modal";
 import { LoginModal } from "../Modal/Login";
 import { SigninModal } from "../Modal/Signin";
 import { NewComment } from "../Modal/NewComment";
+import { useCommentSocket } from "../../providers/comment.provider";
 
 interface IHeaderProps {
   handleChangePage: (page: Pages) => void;
@@ -18,6 +18,7 @@ export const Header: React.FC<IHeaderProps> = (props) => {
     isAuth,
     handleLogout
   } = useAuth();
+  const { client } = useCommentSocket();
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [showSignin, setShowSignin] = useState<boolean>(false);
   const [showCreateComment, setShowCreateComment] = useState<boolean>(false);
@@ -27,7 +28,12 @@ export const Header: React.FC<IHeaderProps> = (props) => {
       setShowLogin(false);
       setShowSignin(false);
     }
-  }, [isAuth])
+
+    client.subscribe('commentCreated', () => {
+      console.log('(Comment) Event - (commentCreated)')
+      setShowCreateComment(false);
+    })
+  }, [isAuth, showCreateComment, client])
 
   return (
     <>
@@ -56,13 +62,15 @@ export const Header: React.FC<IHeaderProps> = (props) => {
                 <button onClick={() => setShowSignin(true)}>Sign-in</button>
               </div>
 
-              <Modal open={!isAuth && showLogin} onClose={() => setShowLogin(false)}>
-                <LoginModal />
-              </Modal>
+              <LoginModal
+                isOpen={!isAuth && showLogin}
+                onClose={() => setShowLogin(false)}
+              />
 
-              <Modal open={!isAuth && showSignin} onClose={() => setShowSignin(false)}>
-                <SigninModal />
-              </Modal>
+              <SigninModal
+                isOpen={!isAuth && showSignin}
+                onClose={() => setShowSignin(false)}
+              />
             </>
           )}
 
@@ -70,9 +78,10 @@ export const Header: React.FC<IHeaderProps> = (props) => {
         
       </header>
 
-      <Modal open={showCreateComment} onClose={() => setShowCreateComment(false)}>
-        <NewComment />
-      </Modal>
+      <NewComment
+        isOpen={showCreateComment}
+        onClose={() => setShowCreateComment(false)}
+      />
     </>
   )
 }

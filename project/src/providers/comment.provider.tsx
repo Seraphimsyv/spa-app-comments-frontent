@@ -91,6 +91,10 @@ const CommentProvider: React.FC<IProvider> = ({ children }) => {
       setTotalPages(data.pages);
       setComments(data.comments);
     })
+
+    setInterval(() => {
+      handleGetComments();
+    }, 1000 * 10)
   }, [client, handleGetComments])
 
   return (

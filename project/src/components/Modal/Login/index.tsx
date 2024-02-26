@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useAuth } from "../../../providers/auth.provider";
+import { Modal } from "..";
 
-export const LoginModal = () => {
+interface IProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const LoginModal: React.FC<IProps> = (props) => {
   const {
     client,
     handleLogin
   } = useAuth();
+  const { isOpen, onClose } = props;
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [inputErr, setInputErr] = useState<{
@@ -38,33 +45,37 @@ export const LoginModal = () => {
   
   return (
     <>
-      <div id="modal-login">
+      <Modal open={isOpen} onClose={onClose}>
+      
+        <div id="modal-login">
 
-        <div
-          style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}
-        >
+          <div
+            style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}
+          >
 
-          <label htmlFor="input-login-username">Username</label>
-          <input
-            type="text"
-            id="input-login-username"
-            value={username}
-            onChange={(evt) => setUsername(evt.target.value)}
-          />
-        
-          <label htmlFor="input-login-password">Password</label>
-          <input
-            type="password"
-            id="input-login-password"
-            value={password}
-            onChange={(evt) => setPassword(evt.target.value)}
-          />
+            <label htmlFor="input-login-username">Username</label>
+            <input
+              type="text"
+              id="input-login-username"
+              value={username}
+              onChange={(evt) => setUsername(evt.target.value)}
+            />
+          
+            <label htmlFor="input-login-password">Password</label>
+            <input
+              type="password"
+              id="input-login-password"
+              value={password}
+              onChange={(evt) => setPassword(evt.target.value)}
+            />
+
+          </div>
+
+          <button onClick={handleAuth}>Login</button>
 
         </div>
 
-        <button onClick={handleAuth}>Login</button>
-
-      </div>
+      </Modal>
     </>
   )
 }
